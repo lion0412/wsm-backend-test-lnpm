@@ -7,15 +7,90 @@
     .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style>
-
+{% if accountId is null %}
+    <link rel="stylesheet" href="../public/assets/css/bootstrap.min.css">
+{% else %}
+     <link rel="stylesheet" href="../../public/assets/css/bootstrap.min.css">
+{% endif %}
+<div class="container">
 <div class="example-wrapper">
     <h1>Hello {{ controller_name }}! ✅</h1>
 
     Please enter the Account ID you'd like to display:
+    <br /><br />
+    <div class="form-group row">
+        <div class="col-md-3">
+            <input class="form-control" id="txtAccountId" type="text" placeholder="Account ID">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <button class="btn-success" id="btnGetData" name="btnGetData">GET DATA</button>
+        </div>
+        <div class="col-md-2">
+            <button class="btn-success" id="btnShowAll" name="btnShowAll">SHOW ALL</button>
+        </div>
+        <div class="col-md-10">
 
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/xampp/htdocs/wsm-backend-test-lnpm/src/Controller/ReportsController.php'|file_link(0) }}">src/Controller/ReportsController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/xampp/htdocs/wsm-backend-test-lnpm/templates/reports/index.html.twig'|file_link(0) }}">templates/reports/index.html.twig</a></code></li>
-    </ul>
+        </div>
+    </div>
+    <br />
+    <h6>Aggregated performance for All ACTIVE accounts is listed below:</h6>
+    {% if data|length > 0 %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <td><strong>Account Name</strong></td>
+                    <td><strong>Account ID</strong></td>
+                    <td><strong>Spend</strong></td>
+                    <td><strong>Clicks</strong></td>
+                    <td><strong>Impressions</strong></td>
+                    <td><strong>Cost per Click</strong></td>
+                </tr>                
+            </thead>
+            <tbody>
+            {% for r in data %}
+                <tr>
+                    <td>{{ r.accountName }}</td>
+                    <td>{{ r.accountId }}</td>
+                    <td>{{ r.spend }}</td>
+                    <td>{{ r.clicks }}</td>
+                    <td>{{ r.impressions }}</td>
+                    <td>{{ r.costPerClick }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        <table>   
+    {% else %}
+    <h4 class="text-danger"><strong>No data available for the supplied Account Id</strong></h4>     
+    {% endif %}
 </div>
+</div>
+{% if accountId is null %}
+    <script type="text/javascript" src="../public/assets/js/jquery-3.4.1.min.js"></script>
+{% else %}
+     <script type="text/javascript" src="../../public/assets/js/jquery-3.4.1.min.js"></script>
+{% endif %}
+<script>
+    $( document ).ready(function() {
+        $("#btnGetData").click(function(){
+            var getUrl = window.location;
+            var urlBase = getUrl.pathname.split('reports');
+            var url = urlBase[0];                    
+            var accountId = $("#txtAccountId").val();
+            if(accountId.length > 0)
+            {
+                document.location.href = url + "reports/" + accountId;
+            }else{
+                document.location.href = url + "reports";
+            }
+        });
+        $("#btnShowAll").click(function(){
+            var getUrl = window.location;
+            var urlBase = getUrl.pathname.split('reports');
+            var url = urlBase[0];  
+            window.location.href = url + "reports";
+        });
+    });
+</script>
 {% endblock %}
